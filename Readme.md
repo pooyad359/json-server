@@ -25,37 +25,41 @@ Without payload (data) to create an empty schema
 ```python
 
 resp = requests.post(
-    'http://127.0.0.1:8000/test4',
+    'http://127.0.0.1:8000/test',
 )
-resp.status_code, resp.content.decode()
+print(resp.content.decode())
 ```
 
-
-
-
-    (200, '{"state":"Unsuccessful","message":"Schema Exists","content":{}}')
-
-
+    {"state":"Successful","content":{}}
+    
 
 With payload (data) to add data to database. It will create the schema if it doesn't exist.
 
 
 ```python
-data = json.dumps({'message': 'Hello There!'})
+data = json.dumps({'Name': 'Bob', 'Age':23})
 resp = requests.post(
-    'http://127.0.0.1:8000/test3',
-#     header='application/json',
+    'http://127.0.0.1:8000/team',
     data=data,
 )
-resp.status_code, resp.content.decode()
+print(resp.content.decode())
 ```
 
+    {"state":"Successful","content":{}}
+    
 
 
+```python
+data = json.dumps({'Name': 'Alice', 'Age':28})
+resp = requests.post(
+    'http://127.0.0.1:8000/team',
+    data=data,
+)
+print(resp.content.decode())
+```
 
-    (200, '{"state":"Successful","content":{}}')
-
-
+    {"state":"Successful","content":{}}
+    
 
 # GET
 
@@ -66,71 +70,50 @@ Get all the data in a schema
 
 
 ```python
-resp = requests.get('http://127.0.0.1:8000/test')
-resp.status_code, json.loads(resp.content.decode())
+resp = requests.get('http://127.0.0.1:8000/team')
+content = json.loads(resp.content.decode())
+print(content)
 ```
 
-
-
-
-    (200,
-     {'state': 'Successful',
-      'content': {'6b837aa1be094d37b62f8b5addf4e662': {'data': {'message': 'Hello There!'},
-        'inserted': '2021-08-13T22:35:01.363723',
-        'last_updated': '2021-08-13T22:35:01.363723'},
-       'b72682e1772b4f4cbe12fe4b9b6e83ef': {'data': {'message': 'Hello There!'},
-        'inserted': '2021-08-13T22:35:11.954140',
-        'last_updated': '2021-08-13T22:35:11.954140'}}})
-
-
+    {'state': 'Successful', 'content': {'1f15ed87835e467e9539c5cf1fa5a0f5': {'data': {'Name': 'Bob', 'Age': 23}, 'inserted': '2021-08-14T01:08:00.948487', 'last_updated': '2021-08-14T01:08:00.948487'}, '6fb389b8d39747a5b05de4d3c06a5710': {'data': {'Name': 'Alice', 'Age': 28}, 'inserted': '2021-08-14T01:08:01.844790', 'last_updated': '2021-08-14T01:08:01.844790'}}}
+    
 
 ## GET `/root/schema/id`
 Get data from a schema using ID
 
 
 ```python
-resp = requests.get('http://127.0.0.1:8000/test/6b837aa1be094d37b62f8b5addf4e662')
-resp.status_code, resp.content.decode()
+resp = requests.get('http://127.0.0.1:8000/team/1f15ed87835e467e9539c5cf1fa5a0f5')
+print(resp.content.decode())
 ```
 
-
-
-
-    (200,
-     '{"state":"Successful","content":{"data":{"message":"Hello There!"},"inserted":"2021-08-13T22:35:01.363723","last_updated":"2021-08-13T22:35:01.363723"}}')
-
-
+    {"state":"Successful","content":{"data":{"Name":"Bob","Age":23},"inserted":"2021-08-14T01:08:00.948487","last_updated":"2021-08-14T01:08:00.948487"}}
+    
 
 # PUT
 To update data
 
 
 ```python
-resp = requests.get('http://127.0.0.1:8000/test')
-content = json.loads(resp.content.decode())
-ids = list(content['content'].keys())
-print(ids)
+data = json.dumps({'Name': 'Bob', 'Age':25})
+resp = requests.put(
+    f'http://127.0.0.1:8000/team/1f15ed87835e467e9539c5cf1fa5a0f5',
+    data=data,
+)
+print(resp.content.decode())
 ```
 
-    ['6b837aa1be094d37b62f8b5addf4e662', 'b72682e1772b4f4cbe12fe4b9b6e83ef', 'a33d90990eef48e489f5fd456bddc206']
+    {"state":"Successful","content":{}}
     
 
 
 ```python
-data = json.dumps({'message': 'Hello Again!'})
-resp = requests.put(
-    f'http://127.0.0.1:8000/test/{ids[0]}',
-    data=data,
-)
-resp.status_code, resp.content.decode()
+resp = requests.get('http://127.0.0.1:8000/team/1f15ed87835e467e9539c5cf1fa5a0f5')
+print(resp.content.decode())
 ```
 
-
-
-
-    (200, 'null')
-
-
+    {"state":"Successful","content":{"data":{"Name":"Bob","Age":25},"inserted":"2021-08-14T01:08:00.948487","last_updated":"2021-08-14T01:08:41.791998"}}
+    
 
 # DELETE
 
@@ -141,39 +124,31 @@ Delete a schema from database
 ```python
 resp = requests.delete(f'http://127.0.0.1:8000/test')
 
-resp.status_code, resp.content.decode()
+print(resp.content.decode())
 ```
 
-
-
-
-    (200, 'null')
-
-
-
-
-```python
-
-```
+    {"state":"Successful","content":{}}
+    
 
 ## DELETE `/root/schema/id`
 Delete data from schema using ID
 
 
 ```python
-resp = requests.delete(f'http://127.0.0.1:8000/test/{ids[0]}')
+resp = requests.delete(f'http://127.0.0.1:8000/team/1f15ed87835e467e9539c5cf1fa5a0f5')
 
-resp.status_code, resp.content.decode()
+print(resp.content.decode())
 ```
 
-
-
-
-    (200, 'null')
-
-
+    {"state":"Successful","content":{}}
+    
 
 
 ```python
-
+resp = requests.get('http://127.0.0.1:8000/team')
+content = json.loads(resp.content.decode())
+print(content)
 ```
+
+    {'state': 'Successful', 'content': {'6fb389b8d39747a5b05de4d3c06a5710': {'data': {'Name': 'Alice', 'Age': 28}, 'inserted': '2021-08-14T01:08:01.844790', 'last_updated': '2021-08-14T01:08:01.844790'}}}
+    
