@@ -1,13 +1,13 @@
+from response import create_success_response, create_fail_response
+from fileio import create_empty_file, read_json, write_json
 from fastapi import FastAPI, Request
 import os
 from pathlib import Path
 import json
-import uuid
-from datetime import datetime
+from data import update_entry, create_new_entry
 
 
 app = FastAPI()
-# os.makedirs("./schemas", exist_ok=True)
 path = Path("./schemas")
 path.mkdir(exist_ok=True)
 
@@ -125,57 +125,3 @@ async def delete_schema(schema: str):
         os.remove(filepath)
     except Exception as e:
         return create_fail_response(str(e))
-
-
-def create_empty_file(filepath):
-    with open(filepath, "w") as fp:
-        json.dump({}, fp)
-
-
-def read_json(filepath):
-    with open(filepath, "r") as fp:
-        return json.load(fp)
-
-
-def write_json(content, filepath):
-    with open(filepath, "w") as fp:
-        return json.dump(content, fp, indent=2)
-
-
-def create_new_entry(content_dict):
-    timestamp = new_timestamp()
-    id = uuid.uuid4().hex
-    entry = {
-        id: {
-            "data": content_dict,
-            "inserted": timestamp,
-            "last_updated": timestamp,
-        },
-    }
-    return entry
-
-
-def update_entry(data, id, new_content):
-    output = data[id]
-    output["data"] = new_content
-    output["last_updated"] = new_timestamp()
-    return output
-
-
-def create_fail_response(message):
-    return {
-        "state": "Unsuccessful",
-        "message": message,
-        "content": {},
-    }
-
-
-def create_success_response(content):
-    return {
-        "state": "Successful",
-        "content": content,
-    }
-
-
-def new_timestamp():
-    return datetime.now().isoformat()
