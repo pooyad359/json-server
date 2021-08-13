@@ -38,7 +38,7 @@ async def get_data_by_id(schema: str, id: str):
         filepath = path / f"{schema}.json"
         data = read_json(filepath)
 
-        return create_success_response(data.get(id, {}))
+        return create_success_response(data[id])
 
     except FileNotFoundError:
         return create_fail_response("Schema does not exist")
@@ -85,6 +85,7 @@ async def update_data_by_id(schema: str, id: str, request: Request):
         content_dict = json.loads(content)
         data[id] = update_entry(data, id, content_dict)
         write_json(data, filepath)
+        return create_success_response({})
     except FileNotFoundError:
         return create_fail_response("Schema does not exist")
 
@@ -104,7 +105,7 @@ async def delete_data_by_id(schema: str, id: str):
         data = read_json(filepath)
         data.pop(id)
         write_json(data, filepath)
-
+        return create_success_response({})
     except FileNotFoundError:
         return create_fail_response("Schema does not exist")
 
@@ -123,5 +124,6 @@ async def delete_schema(schema: str):
         if not filepath.exists():
             return create_fail_response("Schema does not exist")
         os.remove(filepath)
+        return create_success_response({})
     except Exception as e:
         return create_fail_response(str(e))
