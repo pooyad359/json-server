@@ -16,6 +16,9 @@ To run the api server simply run the following command:
 import requests
 ```
 
+# Documentation
+You can use auto-generated documentation by opening 'http://127.0.0.1:8000/docs' in the browser to see how the API can be used.
+
 # POST
 
 ## POST `/root/schema`
