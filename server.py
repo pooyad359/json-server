@@ -15,7 +15,13 @@ path.mkdir(exist_ok=True)
 @app.get("/")
 async def get_schema_list():
     """Get a list of all available schemas"""
-    return {"message": "You have received this message."}
+    if not path.exists():
+        return create_fail_response("There is no schema directory.")
+    files = os.listdir(path)
+    if len(files) == 0:
+        return
+    schemas = [os.path.splitext(f)[0] for f in files]
+    return create_success_response({"schemas": schemas})
 
 
 @app.get("/{schema}")
