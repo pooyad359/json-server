@@ -64,6 +64,17 @@ print(resp.content.decode())
 # GET
 
 ## GET `/root`
+Get a list of available schemas.
+
+
+```python
+resp = requests.get('http://127.0.0.1:8000/')
+content = json.loads(resp.content.decode())
+print(content)
+```
+
+    {'state': 'Successful', 'content': {'schemas': ['team', 'test']}}
+    
 
 ## GET `/root/schema`
 Get all the data in a schema
